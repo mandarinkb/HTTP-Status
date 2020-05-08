@@ -1,0 +1,61 @@
+HTTP Status code
+Success
+	200 OK : เป็นปกติทั่วไปของ request ใช้สำหรับพวก GET หรือ PUT ก็ได้
+	201 Created : response กลับไปกรณีเราสร้าง data ใหม่ จาก POST request อาจจะส่งแค่ status หรือ data ที่เซฟด้วยก็ได้
+	204 No Content : ส่วนใหญ่ใช้กรณี DELETE ลบข้อมูล เพื่อบอกว่า success แล้ว และไม่จำเป็นต้องส่งอะไรกลับมา
+	304 Not Modified เป็น status code ที่บอกว่า client ได้รับการ response แล้วอยู่ใน cache และไม่จำเป็นจะต้องส่งผ่านข้อมูลเดิมอีกครั้ง
+	
+Error
+	400 Bad Request : ปกติผมจะให้อันนี้เป็น general error ครับ พวก request ที่ server ไม่
+	401 Unauthorized : เคสนี้สำหรับ token ผิด หมดอายุ หรือไม่ได้แนบ token มา ทั้งหลาย จะ error 401 กลับไปหมดเลย
+	403 Forbidden : อันนี้คือผ่าน Authen แต่ว่า user คนนั้นไม่มีสิทธิ์เข้าถึงข้อมูล เช่น user ปกติล็อคอินได้แล้ว แต่ถ้าเค้าไป request หน้าที่มีแต่ admin เท่านั้นที่จะเข้าได้ ก็จะได้ 403 Forbidden
+	404 Not Found : ใช้กรณีที่ request นั้นไม่มีอยู่ในระบบครับ
+	405 Gone บ่งบอกว่า resource ที่ต้องการนั้นไม่มีอยู่แล้ว หรืออาจจะย้ายไปที่อื่น
+	429 Too many Request : ใช้กรณีที่เรากำหนด rate limit ไว้ว่า API จะให้เรียกได้ กี่ครั้งต่อนาที ถ้าเกินนั้นก็จะ error
+	
+Server error
+	500 Internal Server Error : ก็คือ request ถูกต้อง แต่โค๊ดเราพังซักทีนึงแหละ แก้ปัญหาที่เราครับ ไม่ต้องโทษใคร
+	503 Server Unavailable : ก็ Server เราพังอีกเช่นกัน
+	502, 504 Bad Gateway Gateway Timeout ส่วนใหญ่จะเป็น error จากพวก Reverse proxy หรือ web server อย่าง NGINX กรณีที่ request ถูก แต่ server เราพัง ตัว NGINX เลยไม่ได้ response กลับไป
+
+====================================
+==1xx: Information==
+100: Continue เซิร์ฟเวอร์ได้รับ request header แล้ว, และ client จะส่ง request body ต่อ
+101: Switching Protocols ผู้ร้องขอต้องการเปลี่ยน protocol
+102: Checkpoint เซิร์ฟเวอร์กำลังประมวลผล
+
+==2xx: Successful==
+200: OK การส่งคำขอสำเร็จแล้ว
+201: Created สร้างทรัพยากรใหม่แล้ว
+202: Accepted คำขอได้รับการยอมรับสำหรับแล้ว แต่ยังประมวลผลยังไม่เสร็จ
+203: Non-Authoritative Information คำขอได้รับการประมวลผลเรียบร้อยแล้ว แต่กำลังส่งคืนข้อมูลที่อาจมาจากแหล่งอื่น
+204: No Content คำขอได้รับการประมวลผลเรียบร้อยแล้ว แต่ไม่ได้ส่งคืนเนื้อหาใด ๆ
+205: Reset Content การร้องขอได้ดำเนินการสำเร็จแล้ว แต่ไม่มีเนื้อหาใด ๆ คืนกลับมา ต่างจากรหัส 204 ตรงที่การตอบรับนี้ ผู้ร้องขอจำเป็นต้องล้างมุมมองของเอกสาร
+206: Partial Content เซิร์ฟเวอร์ส่งข้อมูลมาให้บางส่วน ตามที่ผู้ร้องขอกำหนดไว้ใน header
+
+==3xx: Redirection==
+300: Multiple Choices ผู้ใช้สามารถเลือกลิงค์ที่จะ redirect ไป (ไม่เกิน 5 ลิงค์)
+301: Moved Parmanently หน้าที่เรียกนี้ย้ายไป URL อื่นถาวร
+302: Found หน้าที่เรียกนี้ย้ายไป URL อื่นชั่วคราว
+303: See Other หน้าที่เรียกนี้อยู่ภายใต้ URL อื่น
+304: Not Modified หน้าที่เรียกนี้ยังมีเนื้อหายังไม่ได้แก้ไขตั้งแต่การเรียกครั้งล่าสุด 
+
+==4xx: Client Error==
+400: Bad Request ไม่ตอบสนองเพราะมี syntax ไม่ถูกต้อง
+401: Unauthorizedยัง ไม่ได้ระบุตัวตน
+402: Payment Required มีการเรียกชำระเงิน (ใช้ในอนาคต)
+403: Forbidden ระบุตัวตนแล้วแต่ไม่มีสิทธิ์เข้าถึงส่วนนี้
+404: Not Found ไม่พบหน้าที่ร้องขอ
+405: Method Not Allowed method ไม่ถูกต้อง ดูให้ดีว่าใช้ get, post, put หรือ delete
+406: Not Acceptable header ของ request ไม่สัมพันธ์กัน
+413: Request Entity Too Large ทรัพยากรที่ร้องขอใหญ่เกินกว่าที่จะส่งได้ 
+414: Request-URI Too Long URL ยาวเกินไป
+415: Unsupported Media Type เซิร์ฟเวอร์ไม่รู้จักชนิดของรูปหรือสื่อที่เรียก
+
+==5xx: Server Error==
+500: Internal Server Error มีข้อผิดพลาดบางอย่างภายใน ไม่ทราบสาเหตุ
+501: Not Implemented เซิร์ฟเวอร์ไม่เข้าใจ request หรือไม่สามารถทำงานตามคำสั่งได้
+502: Bad Gateway เซิร์ฟเวอร์เป็น Gateway หรือ Proxy ได้รับ response ผิดพลาดจากเซิร์ฟเวอร์อื่น
+503: Service Unavailable ใช้งานเกินพิกัด(ล่ม) หรือกำลังปรับปรุงเซิร์ฟเวอร์ 
+504: Gateway Timeout เซิร์ฟเวอร์ไม่ได้รับตอบสนองจากเซิร์ฟเวอร์อื่น จนหมดเวลากันก่อน	
+
